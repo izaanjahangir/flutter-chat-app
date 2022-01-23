@@ -15,6 +15,46 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    Widget renderForm() {
+      return Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextInput(placeholder: "Enter your email"),
+              SizedBox(
+                height: medium_space,
+              ),
+              TextInput(
+                placeholder: "Enter your password",
+                obscureText: true,
+              ),
+              SizedBox(
+                height: medium_space,
+              ),
+              Button(label: "Login")
+            ],
+          ));
+    }
+
+    Widget renderFooter() {
+      return Container(
+        height: 60,
+        width: double.infinity,
+        color: white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Don't have an account yet?",
+              style: TextStyle(color: light_black, fontSize: normal_font),
+            ),
+            Text("Register now",
+                style: TextStyle(color: light_black, fontSize: normal_font))
+          ],
+        ),
+      );
+    }
+
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -23,38 +63,29 @@ class _LoginState extends State<Login> {
         child: Scaffold(
           body: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: medium_space),
+            color: dark_black,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  "Login here",
-                  style: TextStyle(color: white, fontSize: medium_font),
-                ),
-                SizedBox(
-                  height: medium_space,
-                ),
-                Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        TextInput(placeholder: "Enter your email"),
-                        SizedBox(
-                          height: medium_space,
-                        ),
-                        TextInput(
-                          placeholder: "Enter your password",
-                          obscureText: true,
-                        ),
-                        SizedBox(
-                          height: medium_space,
-                        ),
-                        Button(label: "Login")
-                      ],
-                    ))
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: medium_space),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Login here",
+                        style: TextStyle(color: white, fontSize: medium_font),
+                      ),
+                      SizedBox(
+                        height: medium_space,
+                      ),
+                      renderForm(),
+                    ],
+                  ),
+                )),
+                renderFooter()
               ],
             ),
-            color: dark_black,
           ),
         ),
       ),

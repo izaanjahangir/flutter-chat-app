@@ -23,7 +23,7 @@ class Button extends StatelessWidget {
             child: Center(
                 child: Text(
               label,
-              style: TextStyle(color: light_black, fontSize: normal_font),
+              style: TextStyle(color: white, fontSize: normal_font),
             )),
           ),
         ),
