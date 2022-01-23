@@ -5,21 +5,29 @@ import 'package:chat_app/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/theme_colors.dart';
 
-class Login extends StatefulWidget {
+class Register extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
-  final _formKey = GlobalKey<FormState>();
+class _RegisterState extends State<Register> {
+  final _registerFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     Widget renderForm() {
       return Form(
-          key: _formKey,
+          key: _registerFormKey,
           child: Column(
             children: [
+              TextInput(placeholder: "Enter your first name"),
+              SizedBox(
+                height: medium_space,
+              ),
+              TextInput(placeholder: "Enter your last name"),
+              SizedBox(
+                height: medium_space,
+              ),
               TextInput(placeholder: "Enter your email"),
               SizedBox(
                 height: medium_space,
@@ -31,7 +39,14 @@ class _LoginState extends State<Login> {
               SizedBox(
                 height: medium_space,
               ),
-              Button(label: "Login")
+              TextInput(
+                placeholder: "Confirm your password",
+                obscureText: true,
+              ),
+              SizedBox(
+                height: medium_space,
+              ),
+              Button(label: "Register")
             ],
           ));
     }
@@ -45,14 +60,14 @@ class _LoginState extends State<Login> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Don't have an account yet?",
+              "Already a user?",
               style: TextStyle(color: light_black, fontSize: normal_font),
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed("/register");
+                Navigator.of(context).pop();
               },
-              child: Text("Register now",
+              child: Text("Login here",
                   style: TextStyle(color: light_black, fontSize: normal_font)),
             )
           ],
@@ -72,22 +87,29 @@ class _LoginState extends State<Login> {
             child: Column(
               children: [
                 Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: medium_space),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Login here",
-                        style: TextStyle(color: white, fontSize: medium_font),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      primary: false,
+                      child: Padding(
+                        padding: const EdgeInsets.all(medium_space),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Register here",
+                              style: TextStyle(
+                                  color: white, fontSize: medium_font),
+                            ),
+                            SizedBox(
+                              height: medium_space,
+                            ),
+                            renderForm(),
+                          ],
+                        ),
                       ),
-                      SizedBox(
-                        height: medium_space,
-                      ),
-                      renderForm(),
-                    ],
+                    ),
                   ),
-                )),
+                ),
                 renderFooter()
               ],
             ),
