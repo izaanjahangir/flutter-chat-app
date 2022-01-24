@@ -15,6 +15,10 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    void login() {
+      Navigator.of(context).pushNamed("/home");
+    }
+
     Widget renderForm() {
       return Form(
           key: _formKey,
@@ -31,7 +35,10 @@ class _LoginState extends State<Login> {
               SizedBox(
                 height: medium_space,
               ),
-              Button(label: "Login")
+              Button(
+                label: "Login",
+                onTap: login,
+              )
             ],
           ));
     }

@@ -51,7 +51,10 @@ class _RegisterState extends State<Register> {
               SizedBox(
                 height: medium_space,
               ),
-              Button(label: "Register")
+              Button(
+                label: "Register",
+                onTap: () {},
+              )
             ],
           ));
     }

@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
   final String label;
+  final Function onTap;
 
-  Button({
-    required this.label,
-  });
+  Button({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,9 @@ class Button extends StatelessWidget {
       child: Material(
         color: light_blue,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            onTap();
+          },
           child: Container(
             width: double.infinity,
             height: 45,
