@@ -3,7 +3,20 @@ import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
 import 'package:flutter/material.dart';
 
-class GenderInput extends StatelessWidget {
+class GenderInput extends StatefulWidget {
+  @override
+  State<GenderInput> createState() => _GenderInputState();
+}
+
+class _GenderInputState extends State<GenderInput> {
+  String? selectedGender;
+
+  void handleGenderSelect(String newGender) {
+    setState(() {
+      selectedGender = newGender;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,12 +33,16 @@ class GenderInput extends StatelessWidget {
           Row(
             children: [
               GenderInputItem(
+                selected: selectedGender == "male",
+                onSelect: handleGenderSelect,
                 type: "male",
               ),
               SizedBox(
                 width: normal_space,
               ),
               GenderInputItem(
+                selected: selectedGender == "female",
+                onSelect: handleGenderSelect,
                 type: "female",
               )
             ],
