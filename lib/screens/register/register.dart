@@ -1,4 +1,5 @@
 import 'package:chat_app/components/button/button.dart';
+import 'package:chat_app/components/gender_input/gender_input.dart';
 import 'package:chat_app/components/text_input/text_input.dart';
 import 'package:chat_app/config/theme_sizes.dart';
 import 'package:chat_app/utils/helpers.dart';
@@ -25,6 +26,10 @@ class _RegisterState extends State<Register> {
                 height: medium_space,
               ),
               TextInput(placeholder: "Enter your last name"),
+              SizedBox(
+                height: medium_space,
+              ),
+              GenderInput(),
               SizedBox(
                 height: medium_space,
               ),
