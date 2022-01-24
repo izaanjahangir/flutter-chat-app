@@ -1,4 +1,5 @@
 const double medium_font = 22;
+const double normal_font_big = 18;
 const double normal_font = 16;
 const double small_font = 12;
 

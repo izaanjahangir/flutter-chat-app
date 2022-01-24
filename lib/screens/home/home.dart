@@ -1,3 +1,4 @@
+import 'package:chat_app/components/recipient_item/recipient_item.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
 import 'package:chat_app/utils/helpers.dart';
@@ -12,28 +13,36 @@ class Home extends StatelessWidget {
           Helpers.dismissKeyboardOnTap(context);
         },
         child: Scaffold(
-          body: Container(
-            width: double.infinity,
-            color: dark_black,
-            child: Column(
-              children: [
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: medium_space),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Home here",
-                        style: TextStyle(color: white, fontSize: medium_font),
-                      ),
-                      SizedBox(
-                        height: medium_space,
-                      ),
-                    ],
-                  ),
-                )),
-              ],
+          body: SingleChildScrollView(
+            child: Container(
+              width: double.infinity,
+              color: dark_black,
+              padding: EdgeInsets.symmetric(horizontal: medium_space),
+              child: Column(
+                children: [
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                  RecipientItem(),
+                ],
+              ),
             ),
           ),
         ),
