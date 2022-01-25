@@ -31,6 +31,10 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void goToChat() {
+      Navigator.of(context).pushNamed("/chat");
+    }
+
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -50,9 +54,6 @@ class Home extends StatelessWidget {
                     child: Avatar(),
                   ),
                 ),
-                SizedBox(
-                  height: normal_space,
-                ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Container(
@@ -61,28 +62,10 @@ class Home extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           getSeperator("Conversation"),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
+                          RecipientItem(
+                            onTap: goToChat,
+                          ),
                           getSeperator("New Users"),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
-                          RecipientItem(),
                         ],
                       ),
                     ),

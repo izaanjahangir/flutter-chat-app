@@ -1,3 +1,4 @@
+import 'package:chat_app/screens/chat/chat.dart';
 import 'package:chat_app/screens/home/home.dart';
 import 'package:chat_app/screens/login/login.dart';
 import 'package:chat_app/screens/register/register.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => Login(),
         '/home': (context) => Home(),
         '/register': (context) => Register(),
+        "/chat": (context) => Chat()
       },
     );
   }

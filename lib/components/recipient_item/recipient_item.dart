@@ -4,12 +4,18 @@ import 'package:chat_app/config/theme_sizes.dart';
 import 'package:flutter/material.dart';
 
 class RecipientItem extends StatelessWidget {
+  final Function onTap;
+
+  RecipientItem({required this.onTap});
+
   @override
   Widget build(BuildContext context) {
     return Material(
       color: dark_black,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          onTap();
+        },
         child: Container(
           padding: EdgeInsets.symmetric(
               vertical: normal_space, horizontal: medium_space),
