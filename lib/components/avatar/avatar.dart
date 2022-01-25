@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Avatar extends StatelessWidget {
-  final double _size = 50;
+  final double size;
   final String? url;
   final Function? onTap;
 
-  Avatar({this.url, this.onTap});
+  Avatar({this.url, this.onTap, this.size = 50});
 
   @override
   Widget build(BuildContext context) {
-    final double _avatarSize = _size * 0.75;
+    final double _avatarSize = size * 0.75;
 
     Widget getImage() {
       if (url != null) {
@@ -30,7 +30,7 @@ class Avatar extends StatelessWidget {
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(_size),
+      borderRadius: BorderRadius.circular(size),
       child: AbsorbPointer(
         absorbing: onTap == null,
         child: GestureDetector(
@@ -39,8 +39,8 @@ class Avatar extends StatelessWidget {
           },
           child: Container(
             color: url != null ? Colors.transparent : white,
-            width: _size,
-            height: _size,
+            width: size,
+            height: size,
             alignment: Alignment.center,
             child: getImage(),
           ),
