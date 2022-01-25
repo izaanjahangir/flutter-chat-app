@@ -5,8 +5,9 @@ import 'package:flutter_svg/svg.dart';
 class Avatar extends StatelessWidget {
   final double _size = 50;
   final String? url;
+  final Function? onTap;
 
-  Avatar({this.url});
+  Avatar({this.url, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +31,20 @@ class Avatar extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(_size),
-      child: Container(
-        color: url != null ? Colors.transparent : white,
-        width: _size,
-        height: _size,
-        alignment: Alignment.center,
-        child: getImage(),
+      child: AbsorbPointer(
+        absorbing: onTap == null,
+        child: GestureDetector(
+          onTap: () {
+            onTap!();
+          },
+          child: Container(
+            color: url != null ? Colors.transparent : white,
+            width: _size,
+            height: _size,
+            alignment: Alignment.center,
+            child: getImage(),
+          ),
+        ),
       ),
     );
   }
