@@ -2,8 +2,11 @@ import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/recipient_item/recipient_item.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/screens/profile/profile.dart';
 import 'package:chat_app/utils/helpers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class Home extends StatelessWidget {
   Widget getSeperator(String label) {
@@ -35,6 +38,14 @@ class Home extends StatelessWidget {
       Navigator.of(context).pushNamed("/chat");
     }
 
+    void openProfileSheet() {
+      showCupertinoModalBottomSheet(
+          context: context,
+          builder: (context) => Profile(),
+          expand: false,
+          duration: Duration(milliseconds: 300));
+    }
+
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -51,7 +62,9 @@ class Home extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: medium_space),
-                    child: Avatar(),
+                    child: Avatar(
+                      onTap: openProfileSheet,
+                    ),
                   ),
                 ),
                 Expanded(

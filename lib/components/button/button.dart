@@ -5,15 +5,28 @@ import 'package:flutter/material.dart';
 class Button extends StatelessWidget {
   final String label;
   final Function onTap;
+  final String theme;
 
-  Button({required this.label, required this.onTap});
+  Button({required this.label, required this.onTap, this.theme = "primary"});
+
+  Color getColor() {
+    if (theme == "primary") {
+      return lightBlue;
+    }
+
+    if (theme == "danger") {
+      return red;
+    }
+
+    return white;
+  }
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(small_radius),
       child: Material(
-        color: lightBlue,
+        color: getColor(),
         child: InkWell(
           onTap: () {
             onTap();

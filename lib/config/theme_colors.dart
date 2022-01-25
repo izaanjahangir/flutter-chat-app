@@ -8,3 +8,4 @@ Color lightGrey = Colors.grey[300] as Color;
 Color black = Colors.black;
 Color lightWhite = Color.fromRGBO(255, 255, 255, 0.3);
 Color lightBlue = Color(0xff2d98da);
+Color red = Colors.red[900] as Color;

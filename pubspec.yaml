@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^1.0.0
   touchable_opacity: ^1.2.0
+  modal_bottom_sheet: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -5,17 +5,18 @@ import 'package:flutter/material.dart';
 class TextInput extends StatelessWidget {
   final String placeholder;
   final bool obscureText;
-  // final OutlineInputBorder border = OutlineInputBorder(
-  //     borderRadius: BorderRadius.circular(10),
-  //     borderSide: BorderSide(color: lightWhite, width: 0.5));
+  final Color? fillColor;
   final OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(small_radius),
       borderSide: BorderSide.none);
 
-  TextInput({required this.placeholder, this.obscureText = false});
+  TextInput(
+      {required this.placeholder, this.obscureText = false, this.fillColor});
 
   @override
   Widget build(BuildContext context) {
+    Color inputFillColor = fillColor == null ? lightBlack : fillColor as Color;
+
     return TextFormField(
       style: TextStyle(color: white, fontSize: normal_font),
       obscureText: obscureText,
@@ -25,7 +26,7 @@ class TextInput extends StatelessWidget {
           contentPadding: const EdgeInsets.only(left: 12, bottom: 18, top: 18),
           enabledBorder: border,
           filled: true,
-          fillColor: lightBlack,
+          fillColor: inputFillColor,
           focusedBorder: border,
           focusColor: Colors.transparent),
       validator: (String? value) {
