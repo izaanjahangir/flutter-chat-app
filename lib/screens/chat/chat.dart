@@ -1,3 +1,4 @@
+import 'package:chat_app/components/chat_bubble/chat_bubble.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
 import 'package:chat_app/utils/helpers.dart';
@@ -19,18 +20,32 @@ class Chat extends StatelessWidget {
                 Container(
                   height: 70,
                   width: double.infinity,
-                  color: dark_black,
+                  color: darkBlack,
                 ),
                 Expanded(
                     child: Container(
                   height: 100,
                   width: double.infinity,
-                  color: light_black,
+                  padding: EdgeInsets.symmetric(
+                      horizontal: medium_space, vertical: small_space),
+                  color: lightBlack,
+                  child: Column(
+                    children: [
+                      ChatBubble(
+                        type: "sender",
+                        message: "This is a message from sender xyz",
+                      ),
+                      ChatBubble(
+                        type: "receiver",
+                        message: "This is a message from receiver xyz",
+                      )
+                    ],
+                  ),
                 )),
                 Container(
                   height: 70,
                   width: double.infinity,
-                  color: dark_black,
+                  color: darkBlack,
                 )
               ],
             ),

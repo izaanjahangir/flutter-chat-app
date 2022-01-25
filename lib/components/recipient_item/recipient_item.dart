@@ -11,7 +11,7 @@ class RecipientItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: dark_black,
+      color: darkBlack,
       child: InkWell(
         onTap: () {
           onTap();

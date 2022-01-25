@@ -7,7 +7,7 @@ class TextInput extends StatelessWidget {
   final bool obscureText;
   // final OutlineInputBorder border = OutlineInputBorder(
   //     borderRadius: BorderRadius.circular(10),
-  //     borderSide: BorderSide(color: light_white, width: 0.5));
+  //     borderSide: BorderSide(color: lightWhite, width: 0.5));
   final OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(small_radius),
       borderSide: BorderSide.none);
@@ -25,7 +25,7 @@ class TextInput extends StatelessWidget {
           contentPadding: const EdgeInsets.only(left: 12, bottom: 18, top: 18),
           enabledBorder: border,
           filled: true,
-          fillColor: light_black,
+          fillColor: lightBlack,
           focusedBorder: border,
           focusColor: Colors.transparent),
       validator: (String? value) {

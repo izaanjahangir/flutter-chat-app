@@ -13,7 +13,7 @@ class Button extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(small_radius),
       child: Material(
-        color: light_blue,
+        color: lightBlue,
         child: InkWell(
           onTap: () {
             onTap();

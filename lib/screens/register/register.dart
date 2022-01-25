@@ -69,14 +69,14 @@ class _RegisterState extends State<Register> {
           children: [
             Text(
               "Already a user?",
-              style: TextStyle(color: light_black, fontSize: normal_font),
+              style: TextStyle(color: lightBlack, fontSize: normal_font),
             ),
             GestureDetector(
               onTap: () {
                 Navigator.of(context).pop();
               },
               child: Text("Login here",
-                  style: TextStyle(color: light_black, fontSize: normal_font)),
+                  style: TextStyle(color: lightBlack, fontSize: normal_font)),
             )
           ],
         ),
@@ -91,7 +91,7 @@ class _RegisterState extends State<Register> {
         child: Scaffold(
           body: Container(
             width: double.infinity,
-            color: dark_black,
+            color: darkBlack,
             child: Column(
               children: [
                 Expanded(

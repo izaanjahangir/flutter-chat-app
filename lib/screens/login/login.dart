@@ -53,14 +53,14 @@ class _LoginState extends State<Login> {
           children: [
             Text(
               "Don't have an account yet?",
-              style: TextStyle(color: light_black, fontSize: normal_font),
+              style: TextStyle(color: lightBlack, fontSize: normal_font),
             ),
             GestureDetector(
               onTap: () {
                 Navigator.of(context).pushNamed("/register");
               },
               child: Text("Register now",
-                  style: TextStyle(color: light_black, fontSize: normal_font)),
+                  style: TextStyle(color: lightBlack, fontSize: normal_font)),
             )
           ],
         ),
@@ -75,7 +75,7 @@ class _LoginState extends State<Login> {
         child: Scaffold(
           body: Container(
             width: double.infinity,
-            color: dark_black,
+            color: darkBlack,
             child: Column(
               children: [
                 Expanded(

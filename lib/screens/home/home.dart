@@ -42,7 +42,7 @@ class Home extends StatelessWidget {
         },
         child: Scaffold(
           body: Container(
-            color: dark_black,
+            color: darkBlack,
             padding: EdgeInsets.symmetric(vertical: normal_space),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

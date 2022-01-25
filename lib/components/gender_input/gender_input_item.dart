@@ -26,7 +26,7 @@ class GenderInputItem extends StatelessWidget {
         },
         child: AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          color: selected ? light_blue : white,
+          color: selected ? lightBlue : white,
           width: 50,
           height: 50,
           padding: EdgeInsets.symmetric(horizontal: small_space),
