@@ -42,6 +42,7 @@ class Home extends StatelessWidget {
       showCupertinoModalBottomSheet(
           context: context,
           builder: (context) => Profile(),
+          enableDrag: false,
           expand: false,
           duration: Duration(milliseconds: 300));
     }
