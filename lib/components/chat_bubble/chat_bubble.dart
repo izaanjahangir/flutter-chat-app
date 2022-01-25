@@ -1,3 +1,4 @@
+import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/chat_bubble/custom_shape.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
