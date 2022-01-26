@@ -5,6 +5,7 @@ import 'package:chat_app/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
+      builder: EasyLoading.init(),
       routes: {
         '/': (context) => Login(),
         '/home': (context) => Home(),

@@ -8,4 +8,8 @@ class Helpers {
       FocusManager.instance.primaryFocus!.unfocus();
     }
   }
+
+  static void closeKeyboard() {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
 }

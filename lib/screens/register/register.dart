@@ -7,6 +7,8 @@ import 'package:chat_app/utils/helpers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/theme_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -63,17 +65,31 @@ class _RegisterState extends State<Register> {
 
     Future<void> register() async {
       try {
+        Helpers.closeKeyboard();
+        EasyLoading.show(status: 'loading...');
         validateFields();
 
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: emailController.text, password: passwordController.text);
-        print(userCredential);
+        CollectionReference users =
+            FirebaseFirestore.instance.collection('users');
+        await users.doc(userCredential.user?.uid).set({
+          "firstName": firstNameController.text,
+          "lastName": lastNameController.text,
+          "gender": selectedGender,
+          "email": emailController.text
+        });
+
+        EasyLoading.showSuccess('Successful');
+        Navigator.of(context).pop();
       } on FirebaseAuthException catch (e) {
-        print(e.message);
+        EasyLoading.showError(e.message as String);
       } on AppException catch (e) {
-        print(e.message);
+        EasyLoading.showError(e.message);
       }
+
+      EasyLoading.dismiss();
     }
 
     void handleGenderSelect(String newGender) {
