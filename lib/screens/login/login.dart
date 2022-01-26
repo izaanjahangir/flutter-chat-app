@@ -1,9 +1,13 @@
 import 'package:chat_app/components/button/button.dart';
 import 'package:chat_app/components/text_input/text_input.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/exceptions/app_exception.dart';
 import 'package:chat_app/utils/helpers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/theme_colors.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -14,11 +18,52 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  Map<String, String> errors = {};
 
   @override
   Widget build(BuildContext context) {
-    void login() {
-      Navigator.of(context).pushNamed("/home");
+    void validateFields() {
+      Map<String, String> localErrors = {};
+
+      if (emailController.text.isEmpty) {
+        localErrors["email"] = "This field is required";
+      }
+      if (passwordController.text.isEmpty) {
+        localErrors["password"] = "This field is required";
+      }
+
+      setState(() {
+        errors = localErrors;
+      });
+
+      if (localErrors.length > 0) {
+        throw AppException("Validation errors");
+      }
+    }
+
+    Future<void> login() async {
+      try {
+        Helpers.closeKeyboard();
+        EasyLoading.show(status: 'loading...');
+        validateFields();
+
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text);
+        CollectionReference users =
+            FirebaseFirestore.instance.collection('users');
+
+        DocumentSnapshot user = await users.doc(userCredential.user?.uid).get();
+
+        EasyLoading.showSuccess('Successful');
+        Navigator.of(context).pushNamed("/home", arguments: {user});
+      } on FirebaseAuthException catch (e) {
+        EasyLoading.showError(e.message as String);
+      } on AppException catch (e) {
+        EasyLoading.showError(e.message);
+      }
+
+      EasyLoading.dismiss();
     }
 
     Widget renderForm() {
@@ -29,6 +74,7 @@ class _LoginState extends State<Login> {
               TextInput(
                 placeholder: "Enter your email",
                 controller: emailController,
+                errorMessage: errors["email"],
               ),
               SizedBox(
                 height: medium_space,
@@ -37,6 +83,7 @@ class _LoginState extends State<Login> {
                 placeholder: "Enter your password",
                 obscureText: true,
                 controller: passwordController,
+                errorMessage: errors["password"],
               ),
               SizedBox(
                 height: medium_space,
