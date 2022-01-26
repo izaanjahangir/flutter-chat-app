@@ -7,6 +7,10 @@ import 'package:chat_app/config/theme_sizes.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
   // ignore: non_constant_identifier_names
   final Seperator = SizedBox(
     height: medium_space,
@@ -60,18 +64,20 @@ class Profile extends StatelessWidget {
                     ),
                     Seperator,
                     TextInput(
-                      placeholder: "Enter your first name",
-                      fillColor: darkBlack,
-                    ),
+                        placeholder: "Enter your first name",
+                        fillColor: darkBlack,
+                        controller: firstNameController),
                     Seperator,
                     TextInput(
                       placeholder: "Enter your last name",
                       fillColor: darkBlack,
+                      controller: lastNameController,
                     ),
                     Seperator,
                     TextInput(
                       placeholder: "Enter your email",
                       fillColor: darkBlack,
+                      controller: emailController,
                     ),
                     Seperator,
                     GenderInput(),

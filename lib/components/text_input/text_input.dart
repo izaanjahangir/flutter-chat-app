@@ -9,9 +9,15 @@ class TextInput extends StatelessWidget {
   final OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(small_radius),
       borderSide: BorderSide.none);
+  final TextEditingController controller;
+  final String? errorMessage;
 
   TextInput(
-      {required this.placeholder, this.obscureText = false, this.fillColor});
+      {required this.placeholder,
+      this.obscureText = false,
+      this.errorMessage,
+      this.fillColor,
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +25,16 @@ class TextInput extends StatelessWidget {
 
     return TextFormField(
       style: TextStyle(color: white, fontSize: normal_font),
+      controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
           hintText: placeholder,
+          errorText: errorMessage,
+          errorMaxLines: 1,
+          focusedErrorBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: red)),
+          errorStyle: TextStyle(color: red, fontSize: small_font),
+          errorBorder: OutlineInputBorder(borderSide: BorderSide(color: red)),
           hintStyle: TextStyle(color: white),
           contentPadding: const EdgeInsets.only(left: 12, bottom: 18, top: 18),
           enabledBorder: border,
@@ -29,11 +42,6 @@ class TextInput extends StatelessWidget {
           fillColor: inputFillColor,
           focusedBorder: border,
           focusColor: Colors.transparent),
-      validator: (String? value) {
-        return (value != null && value.contains('@'))
-            ? 'Do not use the @ char.'
-            : null;
-      },
     );
   }
 }

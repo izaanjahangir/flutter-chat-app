@@ -4,6 +4,10 @@ import 'package:chat_app/config/theme_sizes.dart';
 import 'package:flutter/material.dart';
 
 class GenderInput extends StatefulWidget {
+  final Function? onGenderSelect;
+
+  GenderInput({this.onGenderSelect});
+
   @override
   State<GenderInput> createState() => _GenderInputState();
 }
@@ -15,6 +19,8 @@ class _GenderInputState extends State<GenderInput> {
     setState(() {
       selectedGender = newGender;
     });
+
+    widget.onGenderSelect!(newGender);
   }
 
   @override

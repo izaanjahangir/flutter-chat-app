@@ -2,7 +2,9 @@ import 'package:chat_app/components/button/button.dart';
 import 'package:chat_app/components/gender_input/gender_input.dart';
 import 'package:chat_app/components/text_input/text_input.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/exceptions/app_exception.dart';
 import 'package:chat_app/utils/helpers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/theme_colors.dart';
 
@@ -13,33 +15,113 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final _registerFormKey = GlobalKey<FormState>();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  Map<String, String> errors = {};
+  String? selectedGender;
 
   @override
   Widget build(BuildContext context) {
+    void validateFields() {
+      Map<String, String> localErrors = {};
+
+      if (firstNameController.text.isEmpty) {
+        localErrors["firstName"] = "This field is required";
+      }
+      if (lastNameController.text.isEmpty) {
+        localErrors["lastName"] = "This field is required";
+      }
+      if (emailController.text.isEmpty) {
+        localErrors["email"] = "This field is required";
+      }
+      if (passwordController.text.isEmpty) {
+        localErrors["password"] = "This field is required";
+      }
+      if (confirmPasswordController.text.isEmpty) {
+        localErrors["password2"] = "This field is required";
+      }
+
+      if (passwordController.text.isNotEmpty &&
+          confirmPasswordController.text.isNotEmpty) {
+        if (passwordController.text != confirmPasswordController.text) {
+          localErrors["password"] = "Both passwords should match";
+          localErrors["password2"] = "Both passwords should match";
+        }
+      }
+
+      setState(() {
+        errors = localErrors;
+      });
+
+      if (localErrors.length > 0) {
+        throw AppException("Validation errors");
+      }
+    }
+
+    Future<void> register() async {
+      try {
+        validateFields();
+
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text);
+        print(userCredential);
+      } on FirebaseAuthException catch (e) {
+        print(e.message);
+      } on AppException catch (e) {
+        print(e.message);
+      }
+    }
+
+    void handleGenderSelect(String newGender) {
+      setState(() {
+        selectedGender = newGender;
+      });
+    }
+
     Widget renderForm() {
       return Form(
           key: _registerFormKey,
           child: Column(
             children: [
-              TextInput(placeholder: "Enter your first name"),
+              TextInput(
+                placeholder: "Enter your first name",
+                controller: firstNameController,
+                errorMessage: errors["firstName"],
+              ),
               SizedBox(
                 height: medium_space,
               ),
-              TextInput(placeholder: "Enter your last name"),
+              TextInput(
+                placeholder: "Enter your last name",
+                controller: lastNameController,
+                errorMessage: errors["lastName"],
+              ),
               SizedBox(
                 height: medium_space,
               ),
-              GenderInput(),
+              GenderInput(
+                onGenderSelect: handleGenderSelect,
+              ),
               SizedBox(
                 height: medium_space,
               ),
-              TextInput(placeholder: "Enter your email"),
+              TextInput(
+                placeholder: "Enter your email",
+                controller: emailController,
+                errorMessage: errors["email"],
+              ),
               SizedBox(
                 height: medium_space,
               ),
               TextInput(
                 placeholder: "Enter your password",
                 obscureText: true,
+                controller: passwordController,
+                errorMessage: errors["password"],
               ),
               SizedBox(
                 height: medium_space,
@@ -47,13 +129,15 @@ class _RegisterState extends State<Register> {
               TextInput(
                 placeholder: "Confirm your password",
                 obscureText: true,
+                controller: confirmPasswordController,
+                errorMessage: errors["password2"],
               ),
               SizedBox(
                 height: medium_space,
               ),
               Button(
                 label: "Register",
-                onTap: () {},
+                onTap: register,
               )
             ],
           ));

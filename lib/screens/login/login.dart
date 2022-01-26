@@ -12,6 +12,8 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +26,17 @@ class _LoginState extends State<Login> {
           key: _formKey,
           child: Column(
             children: [
-              TextInput(placeholder: "Enter your email"),
+              TextInput(
+                placeholder: "Enter your email",
+                controller: emailController,
+              ),
               SizedBox(
                 height: medium_space,
               ),
               TextInput(
                 placeholder: "Enter your password",
                 obscureText: true,
+                controller: passwordController,
               ),
               SizedBox(
                 height: medium_space,
