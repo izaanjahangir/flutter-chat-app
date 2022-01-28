@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:uuid/uuid.dart';
 import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/button/button.dart';
 import 'package:chat_app/components/gender_input/gender_input.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class Profile extends StatefulWidget {
   @override
@@ -65,24 +68,30 @@ class _ProfileState extends State<Profile> {
         Helpers.closeKeyboard();
         EasyLoading.show(status: 'loading...');
 
-        Map newUser = {
+        Map<String, dynamic> newUser = {
           "firstName": firstNameController.text,
           "lastName": lastNameController.text,
           "gender": selectedGender
         };
 
+        if (!profileImage!.startsWith("http")) {
+          File imageFile = File(profileImage as String);
+          firebase_storage.Reference ref = firebase_storage
+              .FirebaseStorage.instance
+              .ref('uploads/${Uuid().v4()}.png');
+          await ref.putFile(imageFile);
+          String downloadUrl = await ref.getDownloadURL();
+          newUser["profileImage"] = downloadUrl;
+        }
+
         CollectionReference users =
             FirebaseFirestore.instance.collection('users');
-        await users.doc(user!.id).set({
-          "firstName": firstNameController.text,
-          "lastName": lastNameController.text,
-          "gender": selectedGender
-        }, SetOptions(merge: true));
+        await users.doc(user!.id).set(newUser, SetOptions(merge: true));
 
         Provider.of<UserProvider>(context, listen: false).updateUser(newUser);
         EasyLoading.showSuccess('Successful');
         Navigator.of(context).pop();
-      } on FirebaseAuthException catch (e) {
+      } on FirebaseException catch (e) {
         EasyLoading.showError(e.message as String);
       } on AppException catch (e) {
         EasyLoading.showError(e.message);
