@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Avatar extends StatelessWidget {
   final double size;
@@ -17,11 +20,23 @@ class Avatar extends StatelessWidget {
     final double _editIconSize = _editContainerSize * 0.6;
 
     Widget getImage() {
-      if (url != null) {
+      if (url != null && url!.startsWith("http")) {
         return Image.network(
           url!,
-          width: _avatarSize,
-          height: _avatarSize,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        );
+      }
+
+      if (url != null && !url!.startsWith("http")) {
+        File imageFile = File(url as String);
+
+        return Image.file(
+          imageFile,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
         );
       }
 
@@ -29,7 +44,24 @@ class Avatar extends StatelessWidget {
         "assets/icons/default-avatar.svg",
         width: _avatarSize,
         height: _avatarSize,
+        fit: BoxFit.cover,
       );
+    }
+
+    Future<void> handleImageSelect() async {
+      try {
+        final ImagePicker _picker = ImagePicker();
+        // Pick an image
+        final XFile? image =
+            await _picker.pickImage(source: ImageSource.gallery);
+
+        if (image != null) {
+          onImageSelect!(image);
+        }
+      } catch (e) {
+        print("Error happened");
+        print(e);
+      }
     }
 
     return Container(
@@ -38,13 +70,20 @@ class Avatar extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(size),
             child: AbsorbPointer(
-              absorbing: onTap == null,
+              absorbing: onTap == null && onImageSelect == null,
               child: GestureDetector(
                 onTap: () {
-                  onTap!();
+                  print("here");
+
+                  if (onTap != null) {
+                    onTap!();
+                  }
+                  if (onImageSelect != null) {
+                    handleImageSelect();
+                  }
                 },
                 child: Container(
-                  color: url != null ? Colors.transparent : white,
+                  color: white,
                   width: size,
                   height: size,
                   alignment: Alignment.center,

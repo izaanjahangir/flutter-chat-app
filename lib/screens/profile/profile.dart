@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -23,8 +24,8 @@ class _ProfileState extends State<Profile> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-
   String? selectedGender;
+  String? profileImage;
   UserModel? user;
 
   // ignore: non_constant_identifier_names
@@ -42,11 +43,18 @@ class _ProfileState extends State<Profile> {
     lastNameController.text = user!.lastName;
     emailController.text = user!.email;
     selectedGender = user!.gender;
+    profileImage = user!.profileImage;
   }
 
   @override
   Widget build(BuildContext context) {
-    void handleAvatarSelect() {}
+    void handleAvatarSelect(XFile image) {
+      print(image.path);
+
+      setState(() {
+        profileImage = image.path;
+      });
+    }
 
     void goBack() {
       Navigator.of(context).pop();
@@ -137,6 +145,7 @@ class _ProfileState extends State<Profile> {
                   children: [
                     Avatar(
                       size: 120,
+                      url: profileImage,
                       onImageSelect: handleAvatarSelect,
                     ),
                     Seperator,

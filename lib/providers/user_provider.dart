@@ -7,13 +7,17 @@ class UserProvider with ChangeNotifier {
 
   UserModel? get user => _user;
 
-  void setUser(DocumentSnapshot<Object?> userData) {
+  void setUser(DocumentSnapshot<Object?> snapshot) {
+    Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
+
     _user = UserModel(
         firstName: userData["firstName"],
         lastName: userData["lastName"],
         email: userData["email"],
         gender: userData["gender"],
-        id: userData.id);
+        profileImage: userData["profileImage"],
+        id: snapshot.id);
+
     notifyListeners();
   }
 
@@ -22,6 +26,7 @@ class UserProvider with ChangeNotifier {
         firstName: userData["firstName"] ?? _user!.firstName,
         gender: userData["gender"] ?? _user!.gender,
         lastName: userData["lastName"] ?? user!.lastName,
+        profileImage: userData["profileImage"] ?? user!.profileImage,
         email: _user!.email,
         id: _user!.id);
     notifyListeners();
