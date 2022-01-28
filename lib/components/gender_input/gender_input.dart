@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 
 class GenderInput extends StatefulWidget {
   final Function? onGenderSelect;
+  final String? initialGender;
 
-  GenderInput({this.onGenderSelect});
+  GenderInput({this.onGenderSelect, this.initialGender});
 
   @override
   State<GenderInput> createState() => _GenderInputState();
@@ -14,6 +15,12 @@ class GenderInput extends StatefulWidget {
 
 class _GenderInputState extends State<GenderInput> {
   String? selectedGender;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedGender = widget.initialGender;
+  }
 
   void handleGenderSelect(String newGender) {
     setState(() {

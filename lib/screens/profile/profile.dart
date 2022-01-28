@@ -4,12 +4,28 @@ import 'package:chat_app/components/gender_input/gender_input.dart';
 import 'package:chat_app/components/text_input/text_input.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/exceptions/app_exception.dart';
+import 'package:chat_app/models/user_model.dart';
+import 'package:chat_app/providers/user_provider.dart';
+import 'package:chat_app/utils/helpers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+
+  String? selectedGender;
+  UserModel? user;
 
   // ignore: non_constant_identifier_names
   final Seperator = SizedBox(
@@ -17,11 +33,72 @@ class Profile extends StatelessWidget {
   );
 
   @override
+  void initState() {
+    super.initState();
+
+    user = Provider.of<UserProvider>(context, listen: false).user;
+
+    firstNameController.text = user!.firstName;
+    lastNameController.text = user!.lastName;
+    emailController.text = user!.email;
+    selectedGender = user!.gender;
+  }
+
+  @override
   Widget build(BuildContext context) {
     void handleAvatarSelect() {}
 
     void goBack() {
       Navigator.of(context).pop();
+    }
+
+    Future<void> saveProfile() async {
+      try {
+        Helpers.closeKeyboard();
+        EasyLoading.show(status: 'loading...');
+
+        Map newUser = {
+          "firstName": firstNameController.text,
+          "lastName": lastNameController.text,
+          "gender": selectedGender
+        };
+
+        CollectionReference users =
+            FirebaseFirestore.instance.collection('users');
+        await users.doc(user!.id).set({
+          "firstName": firstNameController.text,
+          "lastName": lastNameController.text,
+          "gender": selectedGender
+        }, SetOptions(merge: true));
+
+        Provider.of<UserProvider>(context, listen: false).updateUser(newUser);
+        EasyLoading.showSuccess('Successful');
+        Navigator.of(context).pop();
+      } on FirebaseAuthException catch (e) {
+        EasyLoading.showError(e.message as String);
+      } on AppException catch (e) {
+        EasyLoading.showError(e.message);
+      }
+
+      EasyLoading.dismiss();
+    }
+
+    Future<void> logout() async {
+      try {
+        EasyLoading.show(status: 'loading...');
+
+        await FirebaseAuth.instance.signOut();
+        Provider.of<UserProvider>(context, listen: false).resetUser();
+
+        EasyLoading.showSuccess('Successful');
+        Navigator.of(context).popUntil(ModalRoute.withName('/'));
+      } on FirebaseAuthException catch (e) {
+        EasyLoading.showError(e.message as String);
+      } on AppException catch (e) {
+        EasyLoading.showError(e.message);
+      }
+
+      EasyLoading.dismiss();
     }
 
     return Scaffold(
@@ -80,11 +157,18 @@ class Profile extends StatelessWidget {
                       controller: emailController,
                     ),
                     Seperator,
-                    GenderInput(),
+                    GenderInput(
+                      initialGender: selectedGender,
+                      onGenderSelect: (newGender) {
+                        setState(() {
+                          selectedGender = newGender;
+                        });
+                      },
+                    ),
                     Seperator,
                     Button(
                       label: "Save Profile",
-                      onTap: () {},
+                      onTap: saveProfile,
                     ),
                     Seperator,
                     Divider(
@@ -95,7 +179,7 @@ class Profile extends StatelessWidget {
                     Seperator,
                     Button(
                       label: "Logout",
-                      onTap: () {},
+                      onTap: logout,
                       theme: "danger",
                     ),
                   ],

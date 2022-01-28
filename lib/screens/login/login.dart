@@ -2,12 +2,15 @@ import 'package:chat_app/components/button/button.dart';
 import 'package:chat_app/components/text_input/text_input.dart';
 import 'package:chat_app/config/theme_sizes.dart';
 import 'package:chat_app/exceptions/app_exception.dart';
+import 'package:chat_app/models/user_model.dart';
+import 'package:chat_app/providers/user_provider.dart';
 import 'package:chat_app/utils/helpers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -53,10 +56,14 @@ class _LoginState extends State<Login> {
         CollectionReference users =
             FirebaseFirestore.instance.collection('users');
 
-        DocumentSnapshot user = await users.doc(userCredential.user?.uid).get();
+        DocumentSnapshot<Object?> user =
+            await users.doc(userCredential.user?.uid).get();
 
         EasyLoading.showSuccess('Successful');
-        Navigator.of(context).pushNamed("/home", arguments: {user});
+
+        Provider.of<UserProvider>(context, listen: false).setUser(user);
+
+        Navigator.of(context).pushNamed("/home");
       } on FirebaseAuthException catch (e) {
         EasyLoading.showError(e.message as String);
       } on AppException catch (e) {
