@@ -144,63 +144,65 @@ class _ProfileState extends State<Profile> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                color: lightBlack,
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(
-                    vertical: medium_space, horizontal: medium_space),
-                child: Column(
-                  children: [
-                    Avatar(
-                      size: 120,
-                      url: profileImage,
-                      onImageSelect: handleAvatarSelect,
-                    ),
-                    Seperator,
-                    TextInput(
-                        placeholder: "Enter your first name",
+            child: Container(
+              color: lightBlack,
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                      vertical: medium_space, horizontal: medium_space),
+                  child: Column(
+                    children: [
+                      Avatar(
+                        size: 120,
+                        url: profileImage,
+                        onImageSelect: handleAvatarSelect,
+                      ),
+                      Seperator,
+                      TextInput(
+                          placeholder: "Enter your first name",
+                          fillColor: darkBlack,
+                          controller: firstNameController),
+                      Seperator,
+                      TextInput(
+                        placeholder: "Enter your last name",
                         fillColor: darkBlack,
-                        controller: firstNameController),
-                    Seperator,
-                    TextInput(
-                      placeholder: "Enter your last name",
-                      fillColor: darkBlack,
-                      controller: lastNameController,
-                    ),
-                    Seperator,
-                    TextInput(
-                      placeholder: "Enter your email",
-                      fillColor: darkBlack,
-                      controller: emailController,
-                    ),
-                    Seperator,
-                    GenderInput(
-                      initialGender: selectedGender,
-                      onGenderSelect: (newGender) {
-                        setState(() {
-                          selectedGender = newGender;
-                        });
-                      },
-                    ),
-                    Seperator,
-                    Button(
-                      label: "Save Profile",
-                      onTap: saveProfile,
-                    ),
-                    Seperator,
-                    Divider(
-                      color: white,
-                      indent: MediaQuery.of(context).size.width * 0.25,
-                      endIndent: MediaQuery.of(context).size.width * 0.25,
-                    ),
-                    Seperator,
-                    Button(
-                      label: "Logout",
-                      onTap: logout,
-                      theme: "danger",
-                    ),
-                  ],
+                        controller: lastNameController,
+                      ),
+                      Seperator,
+                      TextInput(
+                        placeholder: "Enter your email",
+                        fillColor: darkBlack,
+                        controller: emailController,
+                      ),
+                      Seperator,
+                      GenderInput(
+                        initialGender: selectedGender,
+                        onGenderSelect: (newGender) {
+                          setState(() {
+                            selectedGender = newGender;
+                          });
+                        },
+                      ),
+                      Seperator,
+                      Button(
+                        label: "Save Profile",
+                        onTap: saveProfile,
+                      ),
+                      Seperator,
+                      Divider(
+                        color: white,
+                        indent: MediaQuery.of(context).size.width * 0.25,
+                        endIndent: MediaQuery.of(context).size.width * 0.25,
+                      ),
+                      Seperator,
+                      Button(
+                        label: "Logout",
+                        onTap: logout,
+                        theme: "danger",
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

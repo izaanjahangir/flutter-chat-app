@@ -64,6 +64,8 @@ class _LoginState extends State<Login> {
 
         Provider.of<UserProvider>(context, listen: false).setUser(user);
 
+        emailController.clear();
+        passwordController.clear();
         Navigator.of(context).pushNamed("/home");
       } on FirebaseAuthException catch (e) {
         EasyLoading.showError(e.message as String);
