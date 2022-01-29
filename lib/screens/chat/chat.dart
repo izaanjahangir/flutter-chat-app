@@ -29,6 +29,7 @@ class _ChatState extends State<Chat> {
   String? roomId;
   List<MessageModel> messages = [];
   StreamSubscription<dynamic>? messageSubscription;
+  ScrollController scrollController = ScrollController();
 
   final TextEditingController messageController =
       TextEditingController(text: "");
@@ -61,13 +62,18 @@ class _ChatState extends State<Chat> {
       List<MessageModel> newMessages = [];
 
       event.docs.forEach((doc) {
-        print("event");
         newMessages.add(MessageModel.fromMap(doc.data()));
       });
 
       setState(() {
         messages = newMessages;
       });
+
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 600),
+        curve: Curves.fastOutSlowIn,
+      );
     });
   }
 
@@ -271,18 +277,23 @@ class _ChatState extends State<Chat> {
                 ),
                 Expanded(
                     child: Container(
-                  height: 100,
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: medium_space, vertical: small_space),
                   color: lightBlack,
-                  child: Column(
-                    children: [
-                      for (var item in messages)
-                        ChatBubble(
-                          message: item,
-                        ),
-                    ],
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    primary: false,
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: medium_space, vertical: small_space),
+                      child: Column(
+                        children: [
+                          for (var item in messages)
+                            ChatBubble(
+                              message: item,
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 )),
                 getFooter()
