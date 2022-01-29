@@ -4,6 +4,7 @@ import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/recipient_item/recipient_item.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/models/message_model.dart';
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/providers/user_provider.dart';
 import 'package:chat_app/screens/profile/profile.dart';
@@ -179,6 +180,8 @@ class _HomeState extends State<Home> {
                                 onTap: () {
                                   goToChat(item);
                                 },
+                                message:
+                                    MessageModel.fromMap(item["lastMessage"]),
                                 user: UserModel.fromMap(item["user"])),
                           getSeperator("New Users"),
                           for (var item in newUsers)

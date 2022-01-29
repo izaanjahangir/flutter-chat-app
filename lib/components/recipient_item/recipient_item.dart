@@ -41,7 +41,7 @@ class RecipientItem extends StatelessWidget {
                       style: TextStyle(color: white, fontSize: normal_font_big),
                     ),
                     Text(
-                      "This is some dummy message for testing",
+                      message != null ? message!.text : "Start a conversation",
                       style: TextStyle(color: grey, fontSize: normal_font),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
