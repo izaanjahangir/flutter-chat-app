@@ -78,7 +78,8 @@ class _RegisterState extends State<Register> {
           "firstName": firstNameController.text,
           "lastName": lastNameController.text,
           "gender": selectedGender,
-          "email": emailController.text
+          "email": emailController.text,
+          "id": userCredential.user?.uid
         });
 
         EasyLoading.showSuccess('Successful');

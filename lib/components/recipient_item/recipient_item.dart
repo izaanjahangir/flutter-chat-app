@@ -1,12 +1,16 @@
 import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/models/message_model.dart';
+import 'package:chat_app/models/user_model.dart';
 import 'package:flutter/material.dart';
 
 class RecipientItem extends StatelessWidget {
   final Function onTap;
+  final UserModel user;
+  final MessageModel? message;
 
-  RecipientItem({required this.onTap});
+  RecipientItem({required this.onTap, required this.user, this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,9 @@ class RecipientItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Avatar(),
+              Avatar(
+                url: user.profileImage,
+              ),
               SizedBox(
                 width: normal_space,
               ),
@@ -31,7 +37,7 @@ class RecipientItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Izaan jahangir",
+                      user.fullName,
                       style: TextStyle(color: white, fontSize: normal_font_big),
                     ),
                     Text(

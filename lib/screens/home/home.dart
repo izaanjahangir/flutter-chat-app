@@ -2,14 +2,24 @@ import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/recipient_item/recipient_item.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/providers/user_provider.dart';
 import 'package:chat_app/screens/profile/profile.dart';
 import 'package:chat_app/utils/helpers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  List<Map<String, dynamic>> conversations = [];
+
   Widget getSeperator(String label) {
     return Container(
       width: double.infinity,
@@ -34,9 +44,38 @@ class Home extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    fetchData();
+  }
+
+  void fetchData() {
+    Stream collectionStream = FirebaseFirestore.instance
+        .collection('users')
+        .where("id",
+            isNotEqualTo:
+                Provider.of<UserProvider>(context, listen: false).user!.id)
+        .snapshots();
+    collectionStream.listen((event) {
+      List<Map<String, dynamic>> data = [];
+
+      event.docs.forEach((doc) {
+        data.add(doc.data());
+      });
+
+      setState(() {
+        conversations = data;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    void goToChat() {
-      Navigator.of(context).pushNamed("/chat");
+    void goToChat(Map<String, dynamic> selectedUser) {
+      Map<String, dynamic> arguments = {"selectedUser": selectedUser};
+
+      Navigator.of(context).pushNamed("/chat", arguments: arguments);
     }
 
     return SafeArea(
@@ -60,9 +99,12 @@ class Home extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           getSeperator("Conversation"),
-                          RecipientItem(
-                            onTap: goToChat,
-                          ),
+                          for (var item in conversations)
+                            RecipientItem(
+                                onTap: () {
+                                  goToChat(item);
+                                },
+                                user: UserModel.fromMap(item)),
                           getSeperator("New Users"),
                         ],
                       ),

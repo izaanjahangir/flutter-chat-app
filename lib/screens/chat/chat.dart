@@ -2,16 +2,92 @@ import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/chat_bubble/chat_bubble.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/exceptions/app_exception.dart';
+import 'package:chat_app/models/user_model.dart';
+import 'package:chat_app/providers/user_provider.dart';
 import 'package:chat_app/utils/helpers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
-class Chat extends StatelessWidget {
+class Chat extends StatefulWidget {
+  @override
+  State<Chat> createState() => _ChatState();
+}
+
+class _ChatState extends State<Chat> {
+  String? roomId;
+
   final TextEditingController messageController =
       TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    final UserModel otherUser = UserModel.fromMap(args["selectedUser"]);
+
+    Future<String> createRoom() async {
+      try {
+        if (roomId != null) {
+          return Future.value(roomId);
+        }
+
+        final UserModel currentUser =
+            Provider.of<UserProvider>(context, listen: false).user as UserModel;
+
+        CollectionReference room =
+            FirebaseFirestore.instance.collection('rooms');
+
+        DocumentReference doc = await room.add({
+          "users": [currentUser.id, otherUser.id],
+          "createdAt": FieldValue.serverTimestamp(),
+        });
+        await doc.set({"id": doc.id}, SetOptions(merge: true));
+        setState(() {
+          roomId = doc.id;
+        });
+
+        return doc.id;
+      } on AppException catch (e) {
+        throw e;
+      }
+    }
+
+    Future<void> sendMessage() async {
+      try {
+        String message = messageController.text;
+
+        if (message.isEmpty) {
+          throw AppException("Please write some message first");
+        }
+
+        messageController.clear();
+
+        final String roomId = await createRoom();
+        final UserModel currentUser =
+            Provider.of<UserProvider>(context, listen: false).user as UserModel;
+
+        CollectionReference chats = FirebaseFirestore.instance
+            .collection('rooms')
+            .doc(roomId)
+            .collection("chats");
+
+        DocumentReference doc = await chats.add({
+          "sender": currentUser.id,
+          "receiver": otherUser.id,
+          "message": message,
+          "createdAt": FieldValue.serverTimestamp(),
+        });
+        await doc.set({"id": doc.id}, SetOptions(merge: true));
+      } on AppException catch (e) {
+        EasyLoading.showError(e.message);
+      }
+    }
+
     Widget getSendButton() {
       double _size = 35;
       double _iconSize = _size * 0.5;
@@ -19,6 +95,7 @@ class Chat extends StatelessWidget {
       return ClipRRect(
         borderRadius: BorderRadius.circular(_size),
         child: GestureDetector(
+          onTap: sendMessage,
           child: Container(
               color: lightBlue,
               height: _size,
@@ -121,6 +198,7 @@ class Chat extends StatelessWidget {
                       ),
                       Avatar(
                         size: 40,
+                        url: otherUser.profileImage,
                       ),
                       SizedBox(
                         width: small_space,
@@ -129,7 +207,7 @@ class Chat extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Izaan jahangir",
+                            otherUser.fullName,
                             style: TextStyle(
                                 color: white, fontSize: normal_font_big),
                           )

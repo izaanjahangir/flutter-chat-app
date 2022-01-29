@@ -10,25 +10,13 @@ class UserProvider with ChangeNotifier {
   void setUser(DocumentSnapshot<Object?> snapshot) {
     Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
 
-    _user = UserModel(
-        firstName: userData["firstName"],
-        lastName: userData["lastName"],
-        email: userData["email"],
-        gender: userData["gender"],
-        profileImage: userData["profileImage"],
-        id: snapshot.id);
+    _user = UserModel.fromMap(userData);
 
     notifyListeners();
   }
 
-  void updateUser(Map userData) {
-    _user = UserModel(
-        firstName: userData["firstName"] ?? _user!.firstName,
-        gender: userData["gender"] ?? _user!.gender,
-        lastName: userData["lastName"] ?? user!.lastName,
-        profileImage: userData["profileImage"] ?? user!.profileImage,
-        email: _user!.email,
-        id: _user!.id);
+  void updateUser(Map<String, dynamic> userData) {
+    _user!.updateWith(userData);
     notifyListeners();
   }
 
