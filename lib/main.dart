@@ -32,7 +32,17 @@ class MyApp extends StatelessWidget {
         '/': (context) => Login(),
         '/home': (context) => Home(),
         '/register': (context) => Register(),
-        "/chat": (context) => Chat()
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/chat') {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          return MaterialPageRoute(
+              builder: (_) =>
+                  Chat(room: args["roomId"], otherUser: args["selectedUser"]));
+        }
+        return null; // Let `onUnknownRoute` handle this behavior.
       },
     );
   }

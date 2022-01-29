@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/chat_bubble/chat_bubble.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
 import 'package:chat_app/exceptions/app_exception.dart';
+import 'package:chat_app/models/message_model.dart';
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/providers/user_provider.dart';
 import 'package:chat_app/utils/helpers.dart';
@@ -13,22 +16,71 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class Chat extends StatefulWidget {
+  final String? room;
+  final Map<String, dynamic> otherUser;
+
+  Chat({this.room, required this.otherUser});
+
   @override
   State<Chat> createState() => _ChatState();
 }
 
 class _ChatState extends State<Chat> {
   String? roomId;
+  List<MessageModel> messages = [];
+  StreamSubscription<dynamic>? messageSubscription;
 
   final TextEditingController messageController =
       TextEditingController(text: "");
 
   @override
-  Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  void initState() {
+    super.initState();
 
-    final UserModel otherUser = UserModel.fromMap(args["selectedUser"]);
+    if (widget.room != null) {
+      setState(() {
+        roomId = widget.room;
+      });
+      fetchData();
+    }
+  }
+
+  void fetchData() {
+    Stream collectionStream = FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(roomId)
+        .collection("chats")
+        .orderBy("createdAt", descending: false)
+        .snapshots();
+
+    if (messageSubscription != null) {
+      messageSubscription!.cancel();
+    }
+
+    messageSubscription = collectionStream.listen((event) async {
+      List<MessageModel> newMessages = [];
+
+      event.docs.forEach((doc) {
+        print("event");
+        newMessages.add(MessageModel.fromMap(doc.data()));
+      });
+
+      setState(() {
+        messages = newMessages;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    messageSubscription!.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final UserModel otherUser = UserModel.fromMap(widget.otherUser);
 
     Future<String> createRoom() async {
       try {
@@ -43,13 +95,14 @@ class _ChatState extends State<Chat> {
             FirebaseFirestore.instance.collection('rooms');
 
         DocumentReference doc = await room.add({
-          "users": [currentUser.id, otherUser.id],
+          "users": {currentUser.id: true, otherUser.id: true},
           "createdAt": FieldValue.serverTimestamp(),
         });
         await doc.set({"id": doc.id}, SetOptions(merge: true));
         setState(() {
           roomId = doc.id;
         });
+        fetchData();
 
         return doc.id;
       } on AppException catch (e) {
@@ -225,14 +278,10 @@ class _ChatState extends State<Chat> {
                   color: lightBlack,
                   child: Column(
                     children: [
-                      ChatBubble(
-                        type: "sender",
-                        message: "This is a message from sender xyz",
-                      ),
-                      ChatBubble(
-                        type: "receiver",
-                        message: "This is a message from receiver xyz",
-                      )
+                      for (var item in messages)
+                        ChatBubble(
+                          message: item,
+                        ),
                     ],
                   ),
                 )),

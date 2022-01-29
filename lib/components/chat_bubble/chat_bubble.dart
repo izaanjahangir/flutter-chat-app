@@ -1,18 +1,25 @@
-import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/chat_bubble/custom_shape.dart';
 import 'package:chat_app/config/theme_colors.dart';
 import 'package:chat_app/config/theme_sizes.dart';
+import 'package:chat_app/models/message_model.dart';
+import 'package:chat_app/models/user_model.dart';
+import 'package:chat_app/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatBubble extends StatelessWidget {
-  final String type;
-  final String message;
+  final MessageModel message;
 
-  ChatBubble({required this.type, required this.message});
+  ChatBubble({required this.message});
 
   @override
   Widget build(BuildContext context) {
     BorderRadius? borderRadius;
+    UserModel currentUser =
+        Provider.of<UserProvider>(context).user as UserModel;
+
+    final String type =
+        message.sender == currentUser.id ? "sender" : "receiver";
 
     if (type == "receiver") {
       borderRadius = BorderRadius.only(
@@ -51,7 +58,7 @@ class ChatBubble extends StatelessWidget {
                 borderRadius: borderRadius,
               ),
               child: Text(
-                message,
+                message.text,
                 style: TextStyle(
                     color: type == "receiver" ? black : white,
                     fontSize: normal_font),

@@ -1,12 +1,24 @@
-import 'package:chat_app/models/user_model.dart';
-
 class MessageModel {
-  late UserModel user;
-  late String message, timestamp;
+  late String sender, receiver;
+  late String text;
+  late DateTime createdAt;
 
   MessageModel({
-    required this.user,
-    required this.message,
-    required this.timestamp,
+    required this.sender,
+    required this.receiver,
+    required this.text,
+    required this.createdAt,
   });
+
+  MessageModel.fromMap(Map<String, dynamic> messageData) {
+    sender = messageData["sender"];
+    receiver = messageData["receiver"];
+    text = messageData["message"];
+
+    if (messageData["createdAt"] != null) {
+      createdAt = messageData["createdAt"].toDate();
+    } else {
+      createdAt = DateTime.now();
+    }
+  }
 }

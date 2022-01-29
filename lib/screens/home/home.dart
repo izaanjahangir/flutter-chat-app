@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat_app/components/avatar/avatar.dart';
 import 'package:chat_app/components/recipient_item/recipient_item.dart';
 import 'package:chat_app/config/theme_colors.dart';
@@ -7,8 +9,8 @@ import 'package:chat_app/providers/user_provider.dart';
 import 'package:chat_app/screens/profile/profile.dart';
 import 'package:chat_app/utils/helpers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +20,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Map<String, dynamic>> conversations = [];
+  List<dynamic> conversations = [];
+  List<dynamic> newUsers = [];
+  StreamSubscription<dynamic>? chatSubscription;
 
   Widget getSeperator(String label) {
     return Container(
@@ -51,31 +55,102 @@ class _HomeState extends State<Home> {
   }
 
   void fetchData() {
+    EasyLoading.show(status: 'loading...');
+
     Stream collectionStream = FirebaseFirestore.instance
         .collection('users')
         .where("id",
             isNotEqualTo:
                 Provider.of<UserProvider>(context, listen: false).user!.id)
         .snapshots();
-    collectionStream.listen((event) {
-      List<Map<String, dynamic>> data = [];
+
+    if (chatSubscription != null) {
+      chatSubscription!.cancel();
+    }
+
+    chatSubscription = collectionStream.listen((event) async {
+      List<Future> futures = [];
 
       event.docs.forEach((doc) {
-        data.add(doc.data());
+        futures.add(fetchLastMessage(doc.data()));
+      });
+
+      // List<Map<String, dynamic>> data = Future.;
+      List<dynamic> data = await Future.wait(futures);
+      final List<dynamic> conversationList = [];
+      final List<dynamic> newUsersList = [];
+
+      data.forEach((item) {
+        if (item["lastMessage"] != null) {
+          conversationList.add(item);
+        } else {
+          newUsersList.add(item);
+        }
       });
 
       setState(() {
-        conversations = data;
+        conversations = conversationList;
+        newUsers = newUsersList;
       });
+      EasyLoading.dismiss();
     });
+  }
+
+  Future<Map<String, dynamic>?> fetchLastMessage(
+      Map<String, dynamic> data) async {
+    try {
+      final UserModel currentUser =
+          Provider.of<UserProvider>(context, listen: false).user as UserModel;
+      final CollectionReference roomsCollection =
+          FirebaseFirestore.instance.collection('rooms');
+      final QuerySnapshot rooms = await roomsCollection
+          .where("users.${currentUser.id}", isEqualTo: true)
+          .where("users.${data["id"]}", isEqualTo: true)
+          .limit(1)
+          .get();
+
+      print("size " + rooms.size.toString());
+
+      if (rooms.size > 0) {
+        final String roomId = rooms.docs[0].id;
+        final CollectionReference chatCollection = FirebaseFirestore.instance
+            .collection('rooms')
+            .doc(roomId)
+            .collection("chats");
+        final QuerySnapshot messages = await chatCollection
+            .orderBy("createdAt", descending: true)
+            .limit(1)
+            .get();
+        final Map<String, dynamic>? lastMessage = (messages.size > 0
+            ? messages.docs[0].data()
+            : null) as Map<String, dynamic>?;
+        return {"user": data, "lastMessage": lastMessage, "roomId": roomId};
+      }
+
+      return {"user": data};
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    chatSubscription!.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    void goToChat(Map<String, dynamic> selectedUser) {
-      Map<String, dynamic> arguments = {"selectedUser": selectedUser};
+    Future<void> goToChat(Map<String, dynamic> selectedUser) async {
+      Map<String, dynamic> arguments = {
+        "selectedUser": selectedUser["user"],
+        "roomId": selectedUser["roomId"]
+      };
 
-      Navigator.of(context).pushNamed("/chat", arguments: arguments);
+      await Navigator.of(context).pushNamed("/chat", arguments: arguments);
+
+      fetchData();
     }
 
     return SafeArea(
@@ -104,8 +179,14 @@ class _HomeState extends State<Home> {
                                 onTap: () {
                                   goToChat(item);
                                 },
-                                user: UserModel.fromMap(item)),
+                                user: UserModel.fromMap(item["user"])),
                           getSeperator("New Users"),
+                          for (var item in newUsers)
+                            RecipientItem(
+                                onTap: () {
+                                  goToChat(item);
+                                },
+                                user: UserModel.fromMap(item["user"])),
                         ],
                       ),
                     ),
